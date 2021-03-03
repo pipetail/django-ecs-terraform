@@ -11,6 +11,11 @@ cache:
   paths:
     - ~/.cache/pip/
 
+# you might need this for tests
+#services:
+#  - postgres:latest
+
+
 variables:
   PLAN: plan.tfplan
   TF_IN_AUTOMATION: "true"
@@ -84,3 +89,15 @@ ecs-update:
   script:
     - python3 update-ecs.py --cluster=production-cluster --service production-migrate --tag $IMAGE_TAG
     - python3 update-ecs.py --cluster=production-cluster --service production-service --tag $IMAGE_TAG --wait
+
+hadolint:
+  stage: lint
+  image: hadolint/hadolint:latest-debian
+  allow_failure: true
+  only:
+    refs:
+      - merge_requests
+    changes:
+      - "**/Dockerfile*"
+  script:
+    - hadolint */Dockerfile
