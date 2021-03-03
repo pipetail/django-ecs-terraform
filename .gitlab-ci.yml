@@ -5,11 +5,6 @@ stages:
   - infra
   - release
 
-# This folder is cached between builds
-# http://docs.gitlab.com/ee/ci/yaml/README.html#cache
-cache:
-  paths:
-    - ~/.cache/pip/
 
 # you might need this for tests
 #services:
@@ -17,6 +12,7 @@ cache:
 
 
 variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
   PLAN: plan.tfplan
   TF_IN_AUTOMATION: "true"
   TF_FOLDER: terraform
@@ -24,6 +20,12 @@ variables:
   ECR_URL: 684308851758.dkr.ecr.eu-west-1.amazonaws.com
   IMAGE_TAG: $CI_COMMIT_SHORT_SHA
   AWS_DEFAULT_REGION: eu-west-1
+
+# This folder is cached between builds
+# http://docs.gitlab.com/ee/ci/yaml/README.html#cache
+cache:
+  paths:
+    - .cache/pip
 
 terraform apply:
   stage: infra
