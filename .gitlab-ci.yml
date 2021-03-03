@@ -83,4 +83,4 @@ ecs-update:
     - pip install boto3 click
   script:
     - python3 update-ecs.py --cluster=production-cluster --service production-migrate --tag $IMAGE_TAG
-    - python3 update-ecs.py --cluster=production-cluster --service production-service --tag $IMAGE_TAG
+    - python3 update-ecs.py --cluster=production-cluster --service production-service --tag $IMAGE_TAG --wait
