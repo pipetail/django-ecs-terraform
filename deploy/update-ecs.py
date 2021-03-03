@@ -1,5 +1,6 @@
 import boto3
 import click
+import re
 
 
 def get_current_task_definition(client, cluster, service):
@@ -13,13 +14,17 @@ def get_current_task_definition(client, cluster, service):
 @click.command()
 @click.option("--cluster", help="Name of the ECS cluster", required=True)
 @click.option("--service", help="Name of the ECS service", required=True)
-def deploy(cluster, service):
+@click.option("--tag",     help="New image tag",           required=True)
+def deploy(cluster, service, tag):
     client = boto3.client("ecs")
 
     container_definitions = []
     response = get_current_task_definition(client, cluster, service)
     for container_definition in response["taskDefinition"]["containerDefinitions"]:
         new_def = container_definition.copy()
+
+        new_def["image"]=re.sub(':.*$',':' + tag ,new_def["image"])
+
         container_definitions.append(new_def)
 
     response = client.register_task_definition(
