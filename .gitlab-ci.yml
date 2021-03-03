@@ -1,0 +1,86 @@
+stages:
+  - lint
+  - test
+  - build
+  - infra
+  - release
+
+# This folder is cached between builds
+# http://docs.gitlab.com/ee/ci/yaml/README.html#cache
+cache:
+  paths:
+    - ~/.cache/pip/
+
+variables:
+  PLAN: plan.tfplan
+  TF_IN_AUTOMATION: "true"
+  TF_FOLDER: terraform
+  #TF_LOG: TRACE
+  ECR_URL: 684308851758.dkr.ecr.eu-west-1.amazonaws.com
+  IMAGE_TAG: $CI_COMMIT_SHORT_SHA
+  AWS_DEFAULT_REGION: eu-west-1
+
+terraform apply:
+  stage: infra
+  image:
+    name: hashicorp/terraform:0.14.7
+    entrypoint:
+      - '/usr/bin/env'
+      - 'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
+  script:
+    - cd "$TF_FOLDER"
+    - terraform init
+    - terraform apply -auto-approve
+
+build django:
+  stage: build
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  script:
+    - mkdir -p /kaniko/.docker
+    - echo "{\"credsStore\":\"ecr-login\"}" > /kaniko/.docker/config.json
+    - /kaniko/executor --context $CI_PROJECT_DIR/app --dockerfile $CI_PROJECT_DIR/app/Dockerfile --destination $ECR_URL/django:$IMAGE_TAG
+
+build nginx:
+  stage: build
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  script:
+    - mkdir -p /kaniko/.docker
+    - echo "{\"credsStore\":\"ecr-login\"}" > /kaniko/.docker/config.json
+    - /kaniko/executor --context $CI_PROJECT_DIR/nginx --dockerfile $CI_PROJECT_DIR/nginx/Dockerfile --destination $ECR_URL/nginx:$IMAGE_TAG
+
+test:
+  stage: test
+  image: python:3.8.5-slim-buster
+  before_script:
+    - python -V
+    - cd app/
+    - pip install -r requirements.txt
+  script:
+    - python3 manage.py test
+
+lint:
+  stage: lint
+  image: python:3.8.5-slim-buster
+  allow_failure: true
+  before_script:
+    - python -V
+    - cd app/
+    - pip install -r requirements.txt
+  script:
+    - pip install pylint
+    - pylint hello_django
+
+ecs-update:
+  stage: release
+  image: python:3.8.5-slim-buster
+  before_script:
+    - python -V
+    - cd deploy/
+    - pip install boto3 click
+  script:
+    - python3 update-ecs.py --cluster=production-cluster --service production-migrate --tag $IMAGE_TAG
+    - python3 update-ecs.py --cluster=production-cluster --service production-service --tag $IMAGE_TAG

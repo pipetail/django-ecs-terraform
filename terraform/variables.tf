@@ -53,7 +53,7 @@ variable "amis" {
   }
 }
 variable "instance_type" {
-  default = "t2.micro"
+  default = "t3.medium"
 }
 # variable "docker_image_url_django" {
 #   description = "Docker image to run in the ECS cluster"
@@ -100,7 +100,7 @@ variable "autoscale_max" {
 }
 variable "autoscale_desired" {
   description = "Desired autoscale (number of EC2)"
-  default     = "4"
+  default     = "2"
 }
 
 
