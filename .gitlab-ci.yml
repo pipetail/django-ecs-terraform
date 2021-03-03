@@ -45,7 +45,14 @@ build django:
   script:
     - mkdir -p /kaniko/.docker
     - echo "{\"credsStore\":\"ecr-login\"}" > /kaniko/.docker/config.json
-    - /kaniko/executor --context $CI_PROJECT_DIR/app --dockerfile $CI_PROJECT_DIR/app/Dockerfile --destination $ECR_URL/django:$IMAGE_TAG
+    - |
+      /kaniko/executor \
+        --context $CI_PROJECT_DIR/app \
+        --dockerfile $CI_PROJECT_DIR/app/Dockerfile \
+        --destination $ECR_URL/django:$IMAGE_TAG \
+        --cache-repo "$ECR_URL/django-cache" \
+        --cache=true
+
 
 build nginx:
   stage: build
