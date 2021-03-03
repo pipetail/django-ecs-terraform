@@ -87,8 +87,8 @@ resource "aws_ecs_service" "migrate" {
   name            = "${var.ecs_cluster_name}-migrate"
   cluster         = aws_ecs_cluster.production.id
   task_definition = aws_ecs_task_definition.migrate.arn
-  desired_count = 1
-  depends_on    = [null_resource.build]
+  desired_count   = 1
+  depends_on      = [null_resource.build]
 
   lifecycle {
     ignore_changes = [task_definition]
