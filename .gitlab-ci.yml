@@ -75,6 +75,9 @@ build nginx:
 test:
   stage: test
   image: python:3.8.5-slim-buster
+  only:
+    refs:
+      - merge_requests
   before_script:
     - python -V
     - cd app/
@@ -86,6 +89,9 @@ lint:
   stage: test
   image: python:3.8.5-slim-buster
   allow_failure: true
+  only:
+    refs:
+      - merge_requests
   before_script:
     - python -V
     - cd app/
