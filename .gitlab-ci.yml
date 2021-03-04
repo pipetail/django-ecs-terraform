@@ -124,6 +124,7 @@ ecs-update:
     - pip install boto3 click
   script:
     - python3 update-ecs.py --cluster=production-cluster --service production-migrate --tag $IMAGE_TAG
+    # --wait does the same as `aws ecs wait services-stable`
     - python3 update-ecs.py --cluster=production-cluster --service production-service --tag $IMAGE_TAG --wait
 
 hadolint:
