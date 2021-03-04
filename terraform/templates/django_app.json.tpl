@@ -38,6 +38,10 @@
       {
         "name": "ALLOWED_HOSTS",
         "value": "${allowed_hosts}"
+      },
+      {
+        "name": "ENV",
+        "value": "${env}"
       }
     ],
     "mountPoints": [
