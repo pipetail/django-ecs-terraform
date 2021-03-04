@@ -2,6 +2,7 @@ stages:
   - test
   - docker
   - infra
+  - pre-release
   - release
 
 
@@ -93,9 +94,22 @@ lint:
     - pip install pylint
     - pylint hello_django
 
+ecs-update-staging:
+  stage: pre-release
+  image: python:3.8.5-slim-buster
+  only:
+    - master
+  before_script:
+    - python -V
+    - cd deploy/
+    - pip install boto3 click
+  script:
+    - python3 update-ecs.py --cluster=production-cluster --service staging-service --tag $IMAGE_TAG --wait
+
 ecs-update:
   stage: release
   image: python:3.8.5-slim-buster
+  when: manual
   only:
     - master
   before_script:
