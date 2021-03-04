@@ -83,6 +83,25 @@ resource "aws_ecs_service" "production" {
   }
 }
 
+resource "aws_ecs_service" "staging" {
+  name            = "staging-service"
+  cluster         = aws_ecs_cluster.production.id
+  task_definition = aws_ecs_task_definition.app.arn
+  iam_role        = aws_iam_role.ecs-service-role.arn
+  desired_count   = 1
+  depends_on      = [aws_alb_listener.ecs-alb-http-listener, aws_iam_role_policy.ecs-service-role-policy, null_resource.build]
+
+  lifecycle {
+    ignore_changes = [task_definition]
+  }
+
+  load_balancer {
+    target_group_arn = aws_alb_target_group.staging-target-group.arn
+    container_name   = "nginx"
+    container_port   = 80
+  }
+}
+
 resource "aws_ecs_service" "migrate" {
   name            = "${var.ecs_cluster_name}-migrate"
   cluster         = aws_ecs_cluster.production.id
