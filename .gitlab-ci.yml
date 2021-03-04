@@ -1,6 +1,6 @@
 stages:
-  - build
   - test
+  - docker
   - infra
   - release
 
@@ -41,10 +41,12 @@ terraform apply:
     - terraform apply -auto-approve
 
 build django:
-  stage: build
+  stage: docker
   image:
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: [""]
+  only:
+    - master
   script:
     - mkdir -p /kaniko/.docker
     - echo "{\"credsStore\":\"ecr-login\"}" > /kaniko/.docker/config.json
@@ -58,10 +60,12 @@ build django:
 
 
 build nginx:
-  stage: build
+  stage: docker
   image:
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: [""]
+  only:
+    - master
   script:
     - mkdir -p /kaniko/.docker
     - echo "{\"credsStore\":\"ecr-login\"}" > /kaniko/.docker/config.json
