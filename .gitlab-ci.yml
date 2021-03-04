@@ -1,7 +1,6 @@
 stages:
-  - lint
-  - test
   - build
+  - test
   - infra
   - release
 
@@ -77,7 +76,7 @@ test:
     - python3 manage.py test
 
 lint:
-  stage: lint
+  stage: test
   image: python:3.8.5-slim-buster
   allow_failure: true
   before_script:
@@ -100,7 +99,7 @@ ecs-update:
     - python3 update-ecs.py --cluster=production-cluster --service production-service --tag $IMAGE_TAG --wait
 
 hadolint:
-  stage: lint
+  stage: test
   image: hadolint/hadolint:latest-debian
   allow_failure: true
   only:
