@@ -3,9 +3,9 @@ data "aws_route53_zone" "primary" {
   private_zone = false
 }
 
-resource "aws_route53_record" "www" {
+resource "aws_route53_record" "staging" {
   zone_id = data.aws_route53_zone.primary.zone_id
-  name    = "prod.django-ecs.pipetail.io"
+  name    = "staging.django-ecs.pipetail.io"
   type    = "A"
 
   alias {

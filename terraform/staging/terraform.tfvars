@@ -1,0 +1,12 @@
+region                = "eu-west-1"
+rds_password          = "helloworld"
+availability_zones    = ["eu-west-1a", "eu-west-1b"]
+certificate_arn       = "arn:aws:acm:eu-west-1:684308851758:certificate/dd0aa248-8683-41a6-8b36-2c090925ec12"
+allowed_hosts         = ".django-ecs.pipetail.io"
+env                   = "staging"
+vpc_cidr              = "10.1.0.0/16"
+public_subnet_1_cidr  = "10.1.1.0/24"
+public_subnet_2_cidr  = "10.1.2.0/24"
+private_subnet_1_cidr = "10.1.3.0/24"
+private_subnet_2_cidr = "10.1.4.0/24"
+ecs_cluster_name      = "staging"
