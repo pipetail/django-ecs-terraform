@@ -1,3 +1,7 @@
-output "alb_hostname" {
-  value = aws_lb.production.dns_name
+output "prod_endpoint" {
+  value = "https://${aws_route53_record.www.name}"
+}
+
+output "staging_endpoint" {
+  value = "https://${aws_route53_record.staging.name}"
 }
