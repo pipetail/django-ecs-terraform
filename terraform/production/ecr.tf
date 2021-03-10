@@ -24,4 +24,3 @@ resource "aws_ecr_repository" "django-cache" {
     scan_on_push = false
   }
 }
-

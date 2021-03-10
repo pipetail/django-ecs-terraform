@@ -25,7 +25,7 @@ data "template_file" "app" {
     rds_password            = var.rds_password
     rds_hostname            = aws_db_instance.production.address
     allowed_hosts           = var.allowed_hosts
-    env                     = "production"
+    env                     = var.env
   }
 }
 
@@ -141,4 +141,3 @@ resource "aws_ecs_service" "migrate" {
     ignore_changes = [task_definition]
   }
 }
-
